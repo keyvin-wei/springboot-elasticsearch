@@ -11,5 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MainApplication {
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class);
+        System.out.println("Swagger address: http://localhost:8080/swagger-ui.html");
     }
 }

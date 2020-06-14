@@ -5,12 +5,15 @@ import com.keyvin.es.bean.Employee;
 import com.keyvin.es.bean.EsPage;
 import com.keyvin.es.service.ElasticsearchService;
 import com.keyvin.es.utils.ElasticsearchUtil;
+import io.swagger.annotations.Api;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +28,7 @@ import java.util.Random;
  * @author weiwh
  * @date 2020/2/24 23:54
  */
+@Api(tags = "Es接口")
 @RestController
 @RequestMapping("/es")
 public class ESController {
@@ -40,7 +44,7 @@ public class ESController {
      */
     private String esType = "employee";
 
-    @RequestMapping("/createIndex")
+    @GetMapping("/createIndex")
     public String createIndex(HttpServletRequest request, HttpServletResponse response) {
         if (!ElasticsearchUtil.isIndexExist(indexName)) {
             ElasticsearchUtil.createIndex(indexName);
@@ -55,7 +59,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/insertJson")
+    @GetMapping("/insertJson")
     public String insertJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", DateUtil.formatDate(new Date()));
@@ -73,7 +77,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/insertModel")
+    @GetMapping("/insertModel")
     public String insertModel() {
         Employee employee = new Employee();
         employee.setId("66");
@@ -89,7 +93,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/delete")
+    @GetMapping("/delete")
     public String delete(String id) {
         if (StringUtils.isNotBlank(id)) {
             ElasticsearchUtil.deleteDataById(indexName, esType, id);
@@ -104,7 +108,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/update")
+    @GetMapping("/update")
     public String update(String id) {
         if (StringUtils.isNotBlank(id)) {
             JSONObject jsonObject = new JSONObject();
@@ -126,7 +130,7 @@ public class ESController {
      * @param id
      * @return
      */
-    @RequestMapping("/getData")
+    @GetMapping("/getData")
     public String getData(String id) {
         if (StringUtils.isNotBlank(id)) {
             Map<String, Object> map = ElasticsearchUtil.searchDataById(indexName, esType, id, null);
@@ -142,7 +146,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/queryMatchData")
+    @GetMapping("/queryMatchData")
     public String queryMatchData(String name) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolean matchPhrase = false;
@@ -163,7 +167,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/queryWildcardData")
+    @GetMapping("/queryWildcardData")
     public String queryWildcardData() {
         QueryBuilder queryBuilder = QueryBuilders.wildcardQuery("first_name.keyword", "cici");
         List<Map<String, Object>> list = ElasticsearchUtil.searchListData(indexName, esType, queryBuilder, 10, null, null, null);
@@ -175,7 +179,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/queryRegexpData")
+    @GetMapping("/queryRegexpData")
     public String queryRegexpData() {
         QueryBuilder queryBuilder = QueryBuilders.regexpQuery("first_name.keyword", "m--[0-9]{1,11}");
         List<Map<String, Object>> list = ElasticsearchUtil.searchListData(indexName, esType, queryBuilder, 10, null, null, null);
@@ -187,7 +191,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/queryIntRangeData")
+    @GetMapping("/queryIntRangeData")
     public String queryIntRangeData() {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery.must(QueryBuilders.rangeQuery("age").from(24)
@@ -201,7 +205,7 @@ public class ESController {
      *
      * @return
      */
-    @RequestMapping("/queryDateRangeData")
+    @GetMapping("/queryDateRangeData")
     public String queryDateRangeData() {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolQuery.must(QueryBuilders.rangeQuery("age").from("20")
@@ -220,7 +224,7 @@ public class ESController {
      * @param pageSize  每页大小
      * @return
      */
-    @RequestMapping("/queryPage")
+    @GetMapping("/queryPage")
     public String queryPage(String startPage, String pageSize) {
         if (StringUtils.isNotBlank(startPage) && StringUtils.isNotBlank(pageSize)) {
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
