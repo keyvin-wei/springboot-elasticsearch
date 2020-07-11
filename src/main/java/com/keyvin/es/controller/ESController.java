@@ -6,8 +6,8 @@ import com.keyvin.es.bean.EsPage;
 import com.keyvin.es.service.ElasticsearchService;
 import com.keyvin.es.utils.ElasticsearchUtil;
 import io.swagger.annotations.Api;
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.DateUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -62,7 +62,7 @@ public class ESController {
     @GetMapping("/insertJson")
     public String insertJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", DateUtil.formatDate(new Date()));
+        jsonObject.put("id", DateUtils.formatDate(new Date()));
         jsonObject.put("age", 25);
         jsonObject.put("first_name", "j-" + new Random(100).nextInt());
         jsonObject.put("last_name", "cccc");
