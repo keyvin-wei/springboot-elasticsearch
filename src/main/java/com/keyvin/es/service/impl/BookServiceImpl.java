@@ -2,8 +2,10 @@ package com.keyvin.es.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.keyvin.es.bean.entity.BookModel;
-import com.keyvin.es.bean.vo.BookRequestVO;
+import com.keyvin.es.bean.vo.BookAddVo;
+import com.keyvin.es.bean.vo.BookListVo;
 import com.keyvin.es.service.BookService;
+import com.keyvin.es.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionListener;
@@ -53,9 +55,9 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public Map<String, Object> list(BookRequestVO bookRequestVO) {
-        int pageNo = bookRequestVO.getPageNo();
-        int pageSize = bookRequestVO.getPageSize();
+    public Map<String, Object> list(BookListVo bookListVo) {
+        int pageNo = bookListVo.getPageNo();
+        int pageSize = bookListVo.getPageSize();
 
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.from(pageNo - 1);
@@ -65,20 +67,20 @@ public class BookServiceImpl implements BookService {
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
-        if (StringUtils.isNotBlank(bookRequestVO.getName())) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("name", bookRequestVO.getName()));
+        if (StringUtils.isNotBlank(bookListVo.getName())) {
+            boolQueryBuilder.must(QueryBuilders.matchQuery("name", bookListVo.getName()));
         }
-        if (StringUtils.isNotBlank(bookRequestVO.getAuthor())) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("author", bookRequestVO.getAuthor()));
+        if (StringUtils.isNotBlank(bookListVo.getAuthor())) {
+            boolQueryBuilder.must(QueryBuilders.matchQuery("author", bookListVo.getAuthor()));
         }
-        if (null != bookRequestVO.getStatus()) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("status", bookRequestVO.getStatus()));
+        if (null != bookListVo.getStatus()) {
+            boolQueryBuilder.must(QueryBuilders.termQuery("status", bookListVo.getStatus()));
         }
-        if (StringUtils.isNotBlank(bookRequestVO.getSellTime())) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("sellTime", bookRequestVO.getSellTime()));
+        if (StringUtils.isNotBlank(bookListVo.getSellTime())) {
+            boolQueryBuilder.must(QueryBuilders.termQuery("sellTime", bookListVo.getSellTime()));
         }
-        if (StringUtils.isNotBlank(bookRequestVO.getCategories())) {
-            String[] categoryArr = bookRequestVO.getCategories().split(",");
+        if (StringUtils.isNotBlank(bookListVo.getCategories())) {
+            String[] categoryArr = bookListVo.getCategories().split(",");
             List<Integer> categoryList = Arrays.asList(categoryArr).stream().map(e->Integer.valueOf(e)).collect(Collectors.toList());
             BoolQueryBuilder categoryBoolQueryBuilder = QueryBuilders.boolQuery();
             for (Integer category : categoryList) {
@@ -127,18 +129,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void save(BookModel bookModel) {
+    public void save(BookAddVo vo) {
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("id", bookModel.getId());
-        jsonMap.put("name", bookModel.getName());
-        jsonMap.put("author", bookModel.getAuthor());
-        jsonMap.put("category", bookModel.getCategory());
-        jsonMap.put("price", bookModel.getPrice());
-        jsonMap.put("sellTime", bookModel.getSellTime());
-        jsonMap.put("sellReason", bookModel.getSellReason());
-        jsonMap.put("status", bookModel.getStatus());
+        String id = Utils.getUuid();
+        jsonMap.put("id", id);
+        jsonMap.put("name", vo.getName());
+        jsonMap.put("author", vo.getAuthor());
+        jsonMap.put("category", vo.getCategory());
+        jsonMap.put("price", vo.getPrice());
+        jsonMap.put("sellTime", vo.getSellTime());
+        jsonMap.put("sellReason", vo.getSellReason());
+        jsonMap.put("status", vo.getStatus());
 
-        IndexRequest indexRequest = new IndexRequest(INDEX_NAME, INDEX_TYPE, String.valueOf(bookModel.getId()));
+        IndexRequest indexRequest = new IndexRequest(INDEX_NAME, INDEX_TYPE, id);
         indexRequest.source(jsonMap);
 
         client.indexAsync(indexRequest, RequestOptions.DEFAULT, new ActionListener<IndexResponse>() {
@@ -189,8 +192,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(int id) {
-        DeleteRequest request = new DeleteRequest(INDEX_NAME, INDEX_TYPE, String.valueOf(id));
+    public void delete(String id) {
+        DeleteRequest request = new DeleteRequest(INDEX_NAME, INDEX_TYPE, id);
         try {
             DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
             if (deleteResponse.status() == RestStatus.OK) {
@@ -202,8 +205,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookModel detail(int id) {
-        GetRequest getRequest = new GetRequest(INDEX_NAME, INDEX_TYPE, String.valueOf(id));
+    public BookModel detail(String id) {
+        GetRequest getRequest = new GetRequest(INDEX_NAME, INDEX_TYPE, id);
         try {
             GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
             if (getResponse.isExists()) {

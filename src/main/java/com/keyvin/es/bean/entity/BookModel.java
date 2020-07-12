@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Data
 public class BookModel implements Serializable {
 
-
     private Integer id;         //  图书ID
 
     private String name;        //  图书名称

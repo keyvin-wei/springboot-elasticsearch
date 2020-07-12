@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2020/7/12 9:49
  */
 @Data
-public class BookRequestVO {
+public class BookListVo {
     private int pageNo;
     private int pageSize;
     private String name;
@@ -15,6 +15,5 @@ public class BookRequestVO {
     private String status;
     private String sellTime;
     private String categories;
-
 
 }
