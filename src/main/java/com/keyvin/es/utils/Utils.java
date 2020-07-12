@@ -23,12 +23,14 @@ public class Utils {
     }
 
     /**
-     * 生成随机数
+     * 获取uuuid大写
      */
-    public static String uuuId(){
-        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
+    public static String getUuidUp(){
+        return UUID.randomUUID().toString().replace("-", "").toUpperCase();
     }
-
+    /**
+     * 获取uuuid小写
+     */
     public static String getUuid(){
         return UUID.randomUUID().toString().replaceAll("-","");
     }
@@ -37,8 +39,7 @@ public class Utils {
         String charList = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         String rev = "";
         Random f = new Random();
-        for(int i=0;i<length;i++)
-        {
+        for(int i=0;i<length;i++){
             rev += charList.charAt(Math.abs(f.nextInt())%charList.length());
         }
         return rev;
@@ -53,7 +54,7 @@ public class Utils {
 
     public static void main(String[] args) {
         System.out.println(getUuid());
-        System.out.println(uuuId());
+        System.out.println(getUuidUp());
     }
 
 }

@@ -3,8 +3,10 @@ package com.keyvin.es.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.keyvin.es.bean.entity.BookModel;
 import com.keyvin.es.bean.response.BookListResp;
+import com.keyvin.es.bean.response.ResponseEnum;
 import com.keyvin.es.bean.vo.BookAddVo;
 import com.keyvin.es.bean.vo.BookListVo;
+import com.keyvin.es.exception.CustomException;
 import com.keyvin.es.service.BookService;
 import com.keyvin.es.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -111,8 +113,8 @@ public class BookServiceImpl implements BookService {
 
         } catch (IOException e) {
             log.error("查询失败！原因: ", e);
+            throw new CustomException(ResponseEnum.INNER_SERVER_ERROR.getCode());
         }
-        return null;
     }
 
     @Override

@@ -13,3 +13,6 @@ springboot | 2.1.7.RELEASE
 swagger-ui | 2.9.2
 elasticsearch-rest-high-level-client | 6.6.0
 elasticsearch | 6.6.0
+
+列表预览:  
+ ![image](https://github.com/keyvin-wei/springboot-elasticsearch/tree/master/src/main/resources/static/img/bookList.png)

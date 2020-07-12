@@ -4,28 +4,30 @@
     <meta charset="UTF-8">
     <title>图书列表</title>
 
-    <link rel="stylesheet" href="/bootstrap-4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../bootstrap-table/bootstrap-table.css">
 
-    <script src="jquery-3.3.1.min.js"></script>
-    <script src="/bootstrap-4/js/bootstrap.min.js"></script>
-    <script src="/bootstrap-table/bootstrap-table.js"></script>
-    <script src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="../jquery-3.3.1.min.js"></script>
+    <script src="../bootstrap4/js/bootstrap.min.js"></script>
+    <script src="../bootstrap-table/bootstrap-table.js"></script>
+    <script src="../bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
     <script>
         $(function(){
-
             $('#table').bootstrapTable({
-                url: '/book/list',
+                url: '../book/list',
                 method: 'get',
                 sidePagination: 'server',
-                responseHandler: function(res) {  // 加载服务器数据之前的处理程序，可以用来格式化数据。参数：res为从服务器请求到的数据。
+                //加载服务器数据之前的处理程序，可以用来格式化数据。参数：res为从服务器请求到的数据。
+                responseHandler: function(res) {
                     var result = {};
-                    result.total = res.data.totalCount;
-                    result.rows = res.data.pageList;
+                    if(res.code==200){
+                        result.total = res.body.totalHits;
+                        result.rows = res.body.list;
+                    }
                     return result;
                 },
                 pagination: true,
-                pageSize: 3, // 初始PageSize
+                pageSize: 10, // 初始PageSize
                 queryParams: function(params) {
                     var req = {
                         pageSize: params.limit,
@@ -48,16 +50,16 @@
                     field: 'price',
                     title: '单价'
                 }, {
-                    field: 'sellTime',
+                    field: 'publishTime',
                     title: '上架时间'
                 }, {
                     field: 'status',
                     title: '状态',
                     formatter: function(value) {
                         if (value == 1) {
-                            return '<span style="color: green">可售</span>';
+                            return '<span style="color: green">在售</span>';
                         } else {
-                            return '<span style="color: red">不可售</span>';
+                            return '<span style="color: red">已下架</span>';
                         }
                     }
                 }, {
@@ -65,18 +67,18 @@
                     title: '分类',
                     formatter: function(value) {
                         if (value == 10010) {
-                            return '中国当代小说';
-                        } else if (value == 10011) {
-                            return '武侠小说';
-                        } else if (value == 10012) {
-                            return '爱情小说';
-                        } else if (value == 10013) {
-                            return '中国当代随笔';
+                            return '文学小说';
+                        } else if (value == 20010) {
+                            return '科幻小说';
+                        } else if (value == 30010) {
+                            return '杂志其他';
+                        } else {
+                            return '未知';
                         }
                     }
                 }, {
-                    field: 'sellReason',
-                    title: '上架理由'
+                    field: 'content',
+                    title: '图书说明'
                 }, {
                     title: '操作',
                     formatter: function() {
