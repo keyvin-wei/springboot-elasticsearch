@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author weiwh
  * @date 2020/7/12 10:13
  */
-@Api(tags = "搜索接口")
+@Api(tags = "Search接口")
 @RestController
 @RequestMapping("/search")
 public class SearchController {

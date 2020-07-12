@@ -2,6 +2,7 @@ package com.keyvin.es.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.keyvin.es.bean.entity.BookModel;
+import com.keyvin.es.bean.response.BookListResp;
 import com.keyvin.es.bean.vo.BookAddVo;
 import com.keyvin.es.bean.vo.BookListVo;
 import com.keyvin.es.service.BookService;
@@ -47,26 +48,23 @@ import java.util.stream.Collectors;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private static final String INDEX_NAME = "book";
+    private static final String INDEX_NAME = "book_library";
     private static final String INDEX_TYPE = "_doc";
 
     @Autowired
     private RestHighLevelClient client;
 
-
     @Override
-    public Map<String, Object> list(BookListVo bookListVo) {
+    public BookListResp list(BookListVo bookListVo) {
         int pageNo = bookListVo.getPageNo();
         int pageSize = bookListVo.getPageSize();
-
+        //分页
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.from(pageNo - 1);
         sourceBuilder.size(pageSize);
-        sourceBuilder.sort(new FieldSortBuilder("id").order(SortOrder.ASC));
-       // sourceBuilder.query(QueryBuilders.matchAllQuery());
-
+        sourceBuilder.sort("publishTime", SortOrder.DESC);
+        //查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-
         if (StringUtils.isNotBlank(bookListVo.getName())) {
             boolQueryBuilder.must(QueryBuilders.matchQuery("name", bookListVo.getName()));
         }
@@ -76,33 +74,24 @@ public class BookServiceImpl implements BookService {
         if (null != bookListVo.getStatus()) {
             boolQueryBuilder.must(QueryBuilders.termQuery("status", bookListVo.getStatus()));
         }
-        if (StringUtils.isNotBlank(bookListVo.getSellTime())) {
-            boolQueryBuilder.must(QueryBuilders.termQuery("sellTime", bookListVo.getSellTime()));
+        if (null != bookListVo.getPublishTime()) {
+            boolQueryBuilder.must(QueryBuilders.termQuery("publishTime", bookListVo.getPublishTime()));
         }
         if (StringUtils.isNotBlank(bookListVo.getCategories())) {
-            String[] categoryArr = bookListVo.getCategories().split(",");
-            List<Integer> categoryList = Arrays.asList(categoryArr).stream().map(e->Integer.valueOf(e)).collect(Collectors.toList());
-            BoolQueryBuilder categoryBoolQueryBuilder = QueryBuilders.boolQuery();
-            for (Integer category : categoryList) {
-                categoryBoolQueryBuilder.should(QueryBuilders.termQuery("category", category));
-            }
-            boolQueryBuilder.must(categoryBoolQueryBuilder);
+            boolQueryBuilder.must(QueryBuilders.termQuery("categories", bookListVo.getCategories()));
         }
-
         sourceBuilder.query(boolQueryBuilder);
-
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.indices(INDEX_NAME);
         searchRequest.source(sourceBuilder);
 
+        //处理结果
         try {
             SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-
             RestStatus restStatus = searchResponse.status();
             if (restStatus != RestStatus.OK) {
                 return null;
             }
-
             List<BookModel> list = new ArrayList<>();
             SearchHits searchHits = searchResponse.getHits();
             for (SearchHit hit : searchHits.getHits()) {
@@ -111,20 +100,18 @@ public class BookServiceImpl implements BookService {
                 list.add(book);
             }
             long totalHits = searchHits.getTotalHits();
-
-            Map<String, Object> map = new HashMap();
-            map.put("pageNo", pageNo);
-            map.put("pageSize", pageSize);
-            map.put("totalHits", totalHits);
-            map.put("list", list);
+            BookListResp resp = new BookListResp();
+            resp.setPageNo(pageNo);
+            resp.setPageSize(pageSize);
+            resp.setTotalHits(totalHits);
+            resp.setList(list);
             TimeValue took = searchResponse.getTook();
             log.info("查询成功！请求参数: {}, 用时{}毫秒", searchRequest.source().toString(), took.millis());
+            return resp;
 
-            return map;
         } catch (IOException e) {
-            log.error("查询失败！原因: {}", e.getMessage(), e);
+            log.error("查询失败！原因: ", e);
         }
-
         return null;
     }
 
@@ -137,8 +124,8 @@ public class BookServiceImpl implements BookService {
         jsonMap.put("author", vo.getAuthor());
         jsonMap.put("category", vo.getCategory());
         jsonMap.put("price", vo.getPrice());
-        jsonMap.put("sellTime", vo.getSellTime());
-        jsonMap.put("sellReason", vo.getSellReason());
+        jsonMap.put("publishTime", vo.getPublishTime());
+        jsonMap.put("content", vo.getContent());
         jsonMap.put("status", vo.getStatus());
 
         IndexRequest indexRequest = new IndexRequest(INDEX_NAME, INDEX_TYPE, id);
@@ -146,20 +133,18 @@ public class BookServiceImpl implements BookService {
 
         client.indexAsync(indexRequest, RequestOptions.DEFAULT, new ActionListener<IndexResponse>() {
             @Override
-            public void onResponse(IndexResponse indexResponse) {
-                String index = indexResponse.getIndex();
-                String type = indexResponse.getType();
-                String id = indexResponse.getId();
-                long version = indexResponse.getVersion();
+            public void onResponse(IndexResponse response) {
+                String index = response.getIndex();
+                String id = response.getId();
+                long version = response.getVersion();
+                log.info("Index: {}, Id: {}, Version: {}", index, id, version);
 
-                log.info("Index: {}, Type: {}, Id: {}, Version: {}", index, type, id, version);
-
-                if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-                    log.info("写入文档");
-                } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-                    log.info("修改文档");
+                if (response.getResult() == DocWriteResponse.Result.CREATED) {
+                    log.info("插入");
+                } else if (response.getResult() == DocWriteResponse.Result.UPDATED) {
+                    log.info("更新");
                 }
-                ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
+                ReplicationResponse.ShardInfo shardInfo = response.getShardInfo();
                 if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
                     log.warn("部分分片写入成功");
                 }
@@ -179,13 +164,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void update(BookModel bookModel) {
+    public void update(BookModel model) {
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("sellReason", bookModel.getSellReason());
-        UpdateRequest request = new UpdateRequest(INDEX_NAME, INDEX_TYPE, String.valueOf(bookModel.getId()));
+        jsonMap.put("content", model.getContent());
+        UpdateRequest request = new UpdateRequest(INDEX_NAME, INDEX_TYPE, model.getId());
         request.doc(jsonMap);
         try {
-            UpdateResponse updateResponse = client.update(request, RequestOptions.DEFAULT);
+            UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.error("更新失败！原因: {}", e.getMessage(), e);
         }

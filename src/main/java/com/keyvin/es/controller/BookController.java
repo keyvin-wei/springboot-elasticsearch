@@ -27,7 +27,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/book")
 public class BookController {
-    Logger log = LoggerFactory.getLogger(BookController.class);
+    private Logger log = LoggerFactory.getLogger(BookController.class);
 
     @Autowired
     private BookService bookService;
@@ -36,11 +36,11 @@ public class BookController {
     @ApiResponses(@ApiResponse(code=200, message = "OK", response = BookListResp.class))
     @GetMapping("/list")
     public String bookList(@Validated BookListVo vo){
-        Map map = bookService.list(vo);
-        return ResultBody.success(map);
+        BookListResp resp = bookService.list(vo);
+        return ResultBody.success(resp);
     }
 
-    @ApiOperation(value = "添加")
+    @ApiOperation(value = "添加", notes = "请求方式：post请求from表单数据")
     @ApiResponses(@ApiResponse(code=200, message = "OK", response = ResultBody.class))
     @PostMapping("/add")
     public String bookAdd(@Validated BookAddVo vo){

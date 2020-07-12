@@ -35,7 +35,7 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Keyvin云 RESTful API")//页面标题
+                .title("ElasticSearch应用 RESTful API")//页面标题
                 .contact(new Contact("keyvin", "http://www.keyvin.cn/", "943586379@qq.com"))//创建人
                 .version("1.0")//版本号
                 .description("API 描述")//描述

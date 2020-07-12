@@ -1,6 +1,7 @@
 package com.keyvin.es.service;
 
 import com.keyvin.es.bean.entity.BookModel;
+import com.keyvin.es.bean.response.BookListResp;
 import com.keyvin.es.bean.vo.BookAddVo;
 import com.keyvin.es.bean.vo.BookListVo;
 
@@ -13,7 +14,7 @@ public interface BookService {
     /**
      * 列表查询
      */
-    Map<String, Object> list(BookListVo vo);
+    BookListResp list(BookListVo vo);
     /**
      * 保存新增
      */
