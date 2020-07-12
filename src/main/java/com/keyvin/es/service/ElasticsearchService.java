@@ -2,7 +2,7 @@ package com.keyvin.es.service;
 
 /**
  * @author weiwh
- * @date 2020/2/24 23:55
+ * @date 2020/7/12 10:32
  */
 public interface ElasticsearchService {
 
