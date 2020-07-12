@@ -1,7 +1,7 @@
 # springboot-elasticsearch
 
 springboot集成elasticsearch  
-1、连接客户端使用TransportClient  
+1、连接客户端使用TransportClient，官方不推荐，推荐master分支  
 2、集成swagger接口  
 3、需要事先安装elasticsearch  
 
