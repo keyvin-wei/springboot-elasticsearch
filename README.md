@@ -8,12 +8,12 @@ springboot集成elasticsearch
 
 ## 版本
 
-框架 | 版本
+组件框架 | 版本
 --- | ----
 springboot | 2.1.7.RELEASE
 swagger-ui | 2.9.2
 elasticsearch-rest-high-level-client | 6.6.0
 elasticsearch | 6.6.0
 
-列表预览:  
+CRUD列表:  
  ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)
