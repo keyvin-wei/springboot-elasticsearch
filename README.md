@@ -16,4 +16,5 @@ elasticsearch-rest-high-level-client | 6.6.0
 elasticsearch | 6.6.0
 
 CRUD列表:  
+[http://127.0.0.1:8080/es/search/bookList](http://127.0.0.1:8080/es/search/bookList)  
  ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)
