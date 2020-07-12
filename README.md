@@ -15,4 +15,4 @@ elasticsearch-rest-high-level-client | 6.6.0
 elasticsearch | 6.6.0
 
 列表预览:  
- ![image](https://github.com/keyvin-wei/springboot-elasticsearch/tree/master/src/main/resources/static/img/bookList.png)
+ ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)
