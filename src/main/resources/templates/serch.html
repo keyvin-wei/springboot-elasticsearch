@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baidu</title>
+    <!--
+        input:focus设定当输入框被点击时，出现蓝色外边框
+        text-indent: 11px;和padding-left: 11px;设定输入的字符的起始位置与左边框的距离
+    -->
+    <style>
+        input:focus {
+            border: 2px solid rgb(62, 88, 206);
+        }
+        input {
+            text-indent: 11px;
+            padding-left: 11px;
+            font-size: 16px;
+        }
+    </style>
+    <!--input初始状态-->
+    <style class="input/css">
+        .input {
+            width: 40%;
+            height: 45px;
+            vertical-align: top;
+            box-sizing: border-box;
+            border: 2px solid rgb(207, 205, 205);
+            border-right: 2px solid rgb(62, 88, 206);
+            border-bottom-left-radius: 10px;
+            border-top-left-radius: 10px;
+            outline: none;
+            margin: 0;
+            display: inline-block;
+            background: url(camera.png) no-repeat 0 0;
+            background-position: 565px 7px;
+            background-size: 28px;
+            padding-right: 49px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: 16px;
+        }
+    </style>
+    <!--button初始状态-->
+    <style class="button/css">
+        .button {
+            height: 45px;
+            width: 130px;
+            vertical-align: middle;
+            text-indent: -8px;
+            padding-left: -8px;
+            background-color: rgb(62, 88, 206);
+            color: white;
+            font-size: 18px;
+            outline: none;
+            border: none;
+            border-bottom-right-radius: 10px;
+            border-top-right-radius: 10px;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<!--包含table的div-->
+<div>
+    <table
+            border="0"
+            cellpadding="8.2px"
+            cellspacing="5px"
+            width="420px"
+            class="table"
+    >
+        <tr>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="http://news.baidu.com/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >新闻</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="仿宋"
+                ><a
+                        href="https://www.hao123.com/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >hao123</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="http://map.baidu.com/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >地图</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="https://haokan.baidu.com/?sfrom=baidu-top"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >视频</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="http://tieba.baidu.com/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >贴吧</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="http://xueshu.baidu.com/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >学术</a
+                ></font
+                >
+            </th>
+            <th>
+                <font size="2px" face="宋体"
+                ><a
+                        href="http://www.baidu.com/more/"
+                        style="text-decoration: none; color: black;"
+                        οnmοuseοver="this.style.color = 'rgb(62, 88, 206)'"
+                        οnmοuseοut="this.style.color = 'black'"
+                >更多</a
+                ></font
+                >
+            </th>
+        </tr>
+    </table>
+</div>
+<!--包含input和button的div-->
+<div style="font-size: 0px;">
+    <div align="center" style="margin-top: 0px;">
+        <img src="baidu.gif" alt="百度" width="280px" class="pic" />
+    </div>
+    <div align="center">
+        <!--action实现跳转-->
+        <form action="">
+            <input type="text" class="input" name="input" />
+            <input type="submit" class="button" value="百度一下" />
+        </form>
+    </div>
+</div>
+</body>
+</html>

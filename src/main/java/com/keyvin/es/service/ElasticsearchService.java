@@ -2,9 +2,11 @@ package com.keyvin.es.service;
 
 import com.keyvin.es.bean.entity.StudentModel;
 import com.keyvin.es.bean.response.StudentListResp;
+import com.keyvin.es.bean.response.SuggestResp;
 import com.keyvin.es.bean.vo.StudentListVo;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author weiwh
@@ -23,5 +25,7 @@ public interface ElasticsearchService {
     void saveStudent(StudentModel model);
 
     StudentListResp searchData(StudentListVo vo);
+
+    List<SuggestResp> findSuggester(String key);
 
 }

@@ -3,10 +3,7 @@ package com.keyvin.es.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.keyvin.es.bean.entity.BookModel;
 import com.keyvin.es.bean.entity.StudentModel;
-import com.keyvin.es.bean.response.BookListResp;
-import com.keyvin.es.bean.response.ResponseEnum;
-import com.keyvin.es.bean.response.StudentListResp;
-import com.keyvin.es.bean.response.StudentResp;
+import com.keyvin.es.bean.response.*;
 import com.keyvin.es.bean.vo.BookAddVo;
 import com.keyvin.es.bean.vo.StudentListVo;
 import com.keyvin.es.exception.CustomException;
@@ -42,6 +39,10 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.search.suggest.Suggest;
+import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestBuilders;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,13 +62,13 @@ import java.util.Map;
 public class ElasticsearchServiceImpl implements ElasticsearchService {
     private Logger log = LoggerFactory.getLogger(ElasticsearchServiceImpl.class);
     @Autowired
-    private RestHighLevelClient client;
+    private RestHighLevelClient restHighLevelClient;
 
     @Override
     public boolean createIndex(String indexName) throws IOException {
         CreateIndexRequest index = new CreateIndexRequest(indexName);
         index.settings();
-        CreateIndexResponse response = client.indices().create(index, RequestOptions.DEFAULT);
+        CreateIndexResponse response = restHighLevelClient.indices().create(index, RequestOptions.DEFAULT);
         if(response.isAcknowledged()){
             log.info("创建索引{}成功", indexName);
         }else{
@@ -79,17 +80,25 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public boolean createIndexByMapping(String indexName) throws IOException {
         IndexRequest index = new IndexRequest(indexName);
-        XContentBuilder builder = XContentFactory.jsonBuilder()
-                        .startObject("id").field("type", "integer").endObject()
-                        .startObject("age").field("type", "integer").endObject()
-                        .startObject("address").field("type", "text").endObject()
-                        .startObject("name").field("type", "text").field("analyzer", "ik_max_word").endObject()
-                        .startObject("content").field("type", "text").field("analyzer", "ik_smart").endObject()
-                        .startObject("school_name").field("type", "text").field("analyzer", "ik_smart").endObject()
-                        .startObject("school_time").field("type", "date").endObject();
-        index.type("st");
+        XContentBuilder builder = XContentFactory.jsonBuilder();
+        builder.startObject();
+        {
+            builder.field("id", "integer");
+            builder.field("age", "integer");
+            builder.field("address", "text");
+            builder.field("name", "ik_max_word");
+            builder.field("nameSuggest", "completion");
+            builder.field("content", "ik_smart");
+            builder.field("schoolName", "ik_smart");
+            builder.field("schoolTime", "date");
+        }
+        builder.endObject();
         index.source(builder);
-        IndexResponse response = client.index(index, RequestOptions.DEFAULT);
+        index.type("st");
+        //TODO 创建type不正确
+        String str = index.source().utf8ToString();
+        System.out.println("str:"+str);
+        IndexResponse response = restHighLevelClient.index(index, RequestOptions.DEFAULT);
             log.info("创建索引{}成功", indexName);
             log.info(JSON.toJSONString(response));
 
@@ -99,7 +108,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     @Override
     public boolean deleteIndex(String indexName) throws IOException{
         DeleteIndexRequest index = new DeleteIndexRequest(indexName);
-        AcknowledgedResponse response = client.indices().delete(index, RequestOptions.DEFAULT);
+        AcknowledgedResponse response = restHighLevelClient.indices().delete(index, RequestOptions.DEFAULT);
         if(response.isAcknowledged()){
             log.info("删除索引{}成功", indexName);
         }else{
@@ -112,7 +121,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
     public boolean existsIndex(String indexName) throws IOException{
         GetIndexRequest index = new GetIndexRequest();
         index.indices(indexName);
-        boolean flag = client.indices().exists(index, RequestOptions.DEFAULT);
+        boolean flag = restHighLevelClient.indices().exists(index, RequestOptions.DEFAULT);
         return flag;
     }
 
@@ -123,6 +132,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         jsonMap.put("age", model.getAge());
         jsonMap.put("address", model.getAddress());
         jsonMap.put("name", model.getName());
+        jsonMap.put("nameSuggest", model.getName());
         jsonMap.put("content", model.getContent());
         jsonMap.put("schoolName", model.getSchoolName());
         jsonMap.put("schoolTime", model.getSchoolTime());
@@ -130,7 +140,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         IndexRequest indexRequest = new IndexRequest(IndexConstant.INDEX_STUDENT_NAME, IndexConstant.INDEX_STUDENT_TYPE);
         indexRequest.source(jsonMap);
 
-        client.indexAsync(indexRequest, RequestOptions.DEFAULT, new ActionListener<IndexResponse>() {
+        restHighLevelClient.indexAsync(indexRequest, RequestOptions.DEFAULT, new ActionListener<IndexResponse>() {
             @Override
             public void onResponse(IndexResponse response) {
                 String index = response.getIndex();
@@ -189,7 +199,7 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
 
         //处理结果
         try {
-            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             RestStatus restStatus = searchResponse.status();
             if (restStatus != RestStatus.OK) {
                 return null;
@@ -218,4 +228,52 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
             throw new CustomException(ResponseEnum.INNER_SERVER_ERROR.getCode());
         }
     }
+
+    @Override
+    public List<SuggestResp> findSuggester(String key) {
+        CompletionSuggestionBuilder suggestion = SuggestBuilders
+                .completionSuggestion("nameSuggest")
+                .prefix(key)
+                .size(5)
+                .skipDuplicates(true);
+        SuggestBuilder suggestBuilder = new SuggestBuilder();
+        suggestBuilder.addSuggestion("demoSuggest", suggestion);
+
+        //builder
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.sort("schoolTime", SortOrder.DESC);
+        sourceBuilder.suggest(suggestBuilder);
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices(IndexConstant.INDEX_STUDENT_NAME);
+        searchRequest.source(sourceBuilder);
+
+        //处理结果
+        try {
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            RestStatus restStatus = searchResponse.status();
+            if (restStatus != RestStatus.OK) {
+                return null;
+            }
+            List<SuggestResp> list = new ArrayList<>();
+            List<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>> lists = searchResponse.getSuggest().getSuggestion("demoSuggest").getEntries();
+            if(lists!=null){
+                for(Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option> entry: lists){
+                    for(Suggest.Suggestion.Entry.Option option: entry){
+                        SuggestResp model = new SuggestResp();
+                        model.setType("cs");
+                        model.setEs(option.getText().toString());
+                        list.add(model);
+                    }
+                }
+            }
+            TimeValue took = searchResponse.getTook();
+            log.info("查询suggest成功！请求参数: {}, 用时{}毫秒", searchRequest.source().toString(), took.millis());
+            return list;
+
+        } catch (IOException e) {
+            log.error("查询suggest失败！原因: ", e);
+            throw new CustomException(ResponseEnum.INNER_SERVER_ERROR.getCode());
+        }
+    }
+
 }

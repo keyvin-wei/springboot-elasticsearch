@@ -1,6 +1,7 @@
 package com.keyvin.es.controller;
 
 import com.keyvin.es.bean.response.StudentListResp;
+import com.keyvin.es.bean.response.SuggestResp;
 import com.keyvin.es.bean.vo.StudentListVo;
 import com.keyvin.es.config.ResultBody;
 import com.keyvin.es.service.ElasticsearchService;
@@ -14,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * @author weiwh
@@ -33,13 +36,20 @@ public class SearchController {
         return "bookList";
     }
 
+    @ApiOperation(value = "搜索页面")
+    @ApiResponses(@ApiResponse(code=200, message = "OK"))
+    @GetMapping()
+    public String list(){
+        return "search";
+    }
+
     @ApiOperation(value = "搜索补齐、建议")
     @ApiResponses(@ApiResponse(code=200, message = "OK"))
     @ResponseBody
     @GetMapping("/suggester")
     public String suggester(String key){
-
-        return ResultBody.success();
+        List<SuggestResp> list = elasticsearchService.findSuggester(key);
+        return ResultBody.success(list);
     }
 
     @ApiOperation(value = "搜索列表")
@@ -47,8 +57,8 @@ public class SearchController {
     @ResponseBody
     @GetMapping("/list")
     public String list(@Validated StudentListVo vo){
-        StudentListResp list = elasticsearchService.searchData(vo);
-        return ResultBody.success(list);
+        StudentListResp resp = elasticsearchService.searchData(vo);
+        return ResultBody.success(resp);
     }
 
 }
