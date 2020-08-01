@@ -1,6 +1,8 @@
 package com.keyvin.es.service;
 
 import com.keyvin.es.bean.entity.StudentModel;
+import com.keyvin.es.bean.response.StudentListResp;
+import com.keyvin.es.bean.vo.StudentListVo;
 
 import java.io.IOException;
 
@@ -19,4 +21,7 @@ public interface ElasticsearchService {
     boolean existsIndex(String indexName) throws IOException;
 
     void saveStudent(StudentModel model);
+
+    StudentListResp searchData(StudentListVo vo);
+
 }

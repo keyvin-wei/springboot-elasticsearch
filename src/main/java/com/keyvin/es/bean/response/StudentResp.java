@@ -1,6 +1,7 @@
-package com.keyvin.es.bean.entity;
+package com.keyvin.es.bean.response;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  * @date 2020/7/19 11:34
  */
 @Data
-public class StudentModel {
+public class StudentResp {
     @JSONField(ordinal = 1)
     private Integer id;
 
@@ -33,5 +34,9 @@ public class StudentModel {
     @JSONField(ordinal = 7)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date schoolTime;
+
+    @ApiModelProperty(value = "搜索命中词")
+    @JSONField(ordinal = 8)
+    private String fragment;
 
 }

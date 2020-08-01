@@ -1,7 +1,7 @@
 # springboot-elasticsearch
 
 springboot集成elasticsearch  
-1、ES连接客户端使用High Level REST Client（官方推荐）  
+1、ES连接客户端使用High Level REST Client  
 2、集成swagger接口  
 3、集成thymeleaf编写页面  
 4、需要事先安装elasticsearch  

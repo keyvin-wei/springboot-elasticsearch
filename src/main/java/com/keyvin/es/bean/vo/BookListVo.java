@@ -11,12 +11,7 @@ import java.util.Date;
  * @date 2020/7/12 9:49
  */
 @Data
-public class BookListVo {
-    @ApiModelProperty(value = "当前页", example = "1")
-    private int pageNo=1;
-
-    @ApiModelProperty(value = "每页大小", example = "10")
-    private int pageSize=10;
+public class BookListVo extends BaseVo{
 
     @ApiModelProperty(value = "图书名称", example = "瓦尔登湖")
     private String name;

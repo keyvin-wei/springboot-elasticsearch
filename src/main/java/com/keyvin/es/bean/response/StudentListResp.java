@@ -1,7 +1,6 @@
 package com.keyvin.es.bean.response;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.keyvin.es.bean.entity.BookModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,10 +8,10 @@ import java.util.List;
 
 /**
  * @author weiwh
- * @date 2020/7/12 11:55
+ * @date 2020/8/1 11:20
  */
 @Data
-public class BookListResp {
+public class StudentListResp {
     @ApiModelProperty(value = "当前页", example = "1")
     @JSONField(ordinal = 1)
     private int pageNo;
@@ -27,6 +26,6 @@ public class BookListResp {
 
     @ApiModelProperty(value = "数据")
     @JSONField(ordinal = 4)
-    private List<BookModel> list;
+    private List<StudentResp> list;
 
 }
