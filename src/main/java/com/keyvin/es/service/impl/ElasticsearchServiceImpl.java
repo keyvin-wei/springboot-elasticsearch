@@ -231,6 +231,10 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
 
     @Override
     public List<SuggestResp> findSuggester(String key) {
+        List<SuggestResp> list = new ArrayList<>();
+        if(StringUtils.isBlank(key)){
+            return list;
+        }
         CompletionSuggestionBuilder suggestion = SuggestBuilders
                 .completionSuggestion("nameSuggest")
                 .prefix(key)
@@ -254,7 +258,6 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
             if (restStatus != RestStatus.OK) {
                 return null;
             }
-            List<SuggestResp> list = new ArrayList<>();
             List<? extends Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option>> lists = searchResponse.getSuggest().getSuggestion("demoSuggest").getEntries();
             if(lists!=null){
                 for(Suggest.Suggestion.Entry<? extends Suggest.Suggestion.Entry.Option> entry: lists){
