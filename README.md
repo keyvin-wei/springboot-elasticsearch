@@ -19,4 +19,7 @@ analysis-ik | 6.6.0
 
 列表:  
 [http://127.0.0.1:8080/es/search/bookList](http://127.0.0.1:8080/es/search/bookList)  
- ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)
+ ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)  
+
+分词搜索页：  
+![image](https://github.com/keyvin-wei/springboot-elasticsearch/blob/master/src/main/resources/static/img/searchSuggest.gif)
