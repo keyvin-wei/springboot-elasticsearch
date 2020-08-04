@@ -5,18 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>yuanli yixia</title>
     <script src="./jquery-3.3.1.min.js"></script>
-    <!--
-        input:focus设定当输入框被点击时，出现蓝色外边框
-        text-indent: 11px;和padding-left: 11px;设定输入的字符的起始位置与左边框的距离
-    -->
     <style>
         input:focus {
             border: 2px solid rgb(62, 88, 206);
         }
         input {
-            text-indent: 11px;
-            padding-left: 11px;
+            text-indent: 5px;
+            padding-left: 5px;
             font-size: 16px;
+        }
+        .suggestUl {
+            position: absolute;
+            width: 38%;
+            padding: 0px;
+            margin: 0px 26%;
+        }
+        .suggestUl li {
+            display: block;
+            font: 14px/25px '微软雅黑','黑体',sans-serif;
+            margin: 0px;
+            color: rgb(66, 139, 202);
+            text-align: left;
+            padding: 1px;
+        }
+        .suggestUl li:hover {
+            cursor: pointer;
+            margin: 0px;
+            background-color: rgb(227,227,227);
         }
     </style>
     <!--input初始状态-->
@@ -33,10 +48,7 @@
             outline: none;
             margin: 0;
             display: inline-block;
-            background: url(img/camera.jpg) no-repeat 0 0;
-            background-position: 565px 7px;
-            background-size: 28px;
-            padding-right: 49px;
+            padding-right: 10px;
             padding-top: 10px;
             padding-bottom: 10px;
             line-height: 16px;
@@ -116,36 +128,23 @@
 <!--包含input和button的div-->
 <div style="font-size: 0px;">
     <div align="center" style="margin: 20px 0;">
-        <img src="./img/hh.jpg" alt="园丽一下" width="100px" class="pic" />
+        <img src="./img/hh.jpg" alt="搜索" width="100px" class="pic" />
     </div>
     <div align="center">
         <!--action实现跳转-->
         <form action="">
             <input type="text" class="input" name="input" id="yuanliyixia" autoComplete="off"/>
-            <input type="submit" class="button" value="园丽一下" />
+            <input type="submit" class="button" value="搜索" />
         </form>
     </div>
 </div>
 
 <script>
-    function createstyle(css){
-        var mystyle=$('#mystyle');
-        if(!mystyle.length>0){
-            var style="<style id='mystyle'></style>";
-            $(document).find('head').append(style);
-            mystyle=$('#mystyle');
-        }
-        mystyle.append(css);
-    }
-
-    function autoShowSG(id) {
+        function autoShowSG(id) {
         var wd=$(id)[0].clientWidth;
         var hg=$(id)[0].clientHeight;
-        var suggest='<ul id="suggest" style="display: none;position:absolute;width: 37%; background-color: aliceblue;padding: 0 8px;margin: 0 26%;"></ul>';
-        var css_li="#suggest li{display: block;height:"+hg+";font: 14px/25px '微软雅黑','黑体',sans-serif;margin: 0px;color:rgb(66, 139, 202);text-align: left;padding:1px}";
-        css_li+="#suggest li:hover{cursor: pointer;margin: 0px;background-color: rgb(227,227,227);}";
+        var suggest='<ul id="suggest" class="suggestUl"></ul>';
         $(id).after(suggest);
-        createstyle(css_li);
         $(id).bind('keyup click',function (e) {
             var name= $(this).val();
             if(name != 0){
@@ -172,11 +171,13 @@
                         if(html !=''){
                             $('#suggest').show();
                             $('#suggest').html(html);
-                            $('#suggest li').css(css_li);
                             $('#suggest li').bind('click',function(e){
                                 $(id).val($(e.target).html());
                                 $('#suggest').hide();
                             });
+                        }else{
+                            $('#suggest').html("");
+                            $('#suggest').hide();
                         }
                     },
                     //调用执行后调用的函数
@@ -188,6 +189,9 @@
                         console.log("error");
                     }
                 });
+            }else{
+                $('#suggest').html("");
+                $('#suggest').hide();
             }
         });
 
