@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>searchBaidu</title>
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/vueSearch.css">
+    <script type="text/javascript" src="../static/vue2.6.10/vue.js"></script>
+    <script type="text/javascript" src="../static/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/vueSearch.js"></script>
+
+</head>
+<body>
+    <div id="wrapper" class="wrapper_new">
+        <div id="head">
+            <!--起始中间页-->
+
+            <!--搜索页-->
+            <div id="head_wrapper" class="head_wrapper">
+                <div id="s_fm" class="s_fm">
+                    <div class="s_form_wrapper">
+                        <a href="/" id="result_logo" onmousedown="return c({'fm':'tab','tab':'logo'})">
+                            <img src="http://localhost:8080/es/img/hh.jpg" title="首页">
+                        </a>
+                    </div>
+                    <form id="form" name="f" action="/es" class="fm">
+                        <div id="suggetUl" class="bdsug bdsug-new">
+                            <ul>
+                                <li class="bdsug-overflow">
+                                    css<b>是什么</b>
+                                </li>
+                                <li class="bdsug-overflow">
+                                    css<b>ci</b>
+                                </li>
+                                <li class="bdsug-overflow">
+                                    css<b>选择器</b>
+                                </li>
+                            </ul>
+                        </div>
+                        <span class="bg s_ipt_wr quickdelete-wrap">
+                            <input id="kw" name="wd" class="s_ipt" maxlength="255" autocomplete="off" onblur="showSuggetUl(false)" onfocus="showSuggetUl(true)">
+                        </span>
+                        <span class="bg s_btn_wr">
+                            <input type="submit" id="su" class="bg s_btn" value="搜索">
+                        </span>
+                    </form>
+                </div>
+                <div id="s_user"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
