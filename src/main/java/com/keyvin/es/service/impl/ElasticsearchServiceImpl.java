@@ -183,8 +183,8 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
         sourceBuilder.sort("schoolTime", SortOrder.DESC);
         //高亮条件
         HighlightBuilder highlightBuilder = new HighlightBuilder();
-        highlightBuilder.preTags("<span>");
-        highlightBuilder.postTags("</span>");
+        highlightBuilder.preTags("<em>");
+        highlightBuilder.postTags("</em>");
         highlightBuilder.field("name");
         //查询条件
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();

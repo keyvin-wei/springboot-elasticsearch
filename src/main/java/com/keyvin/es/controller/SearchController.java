@@ -40,7 +40,7 @@ public class SearchController {
     @ApiResponses(@ApiResponse(code=200, message = "OK"))
     @GetMapping()
     public String list(){
-        return "search";
+        return "vueSearch";
     }
 
     @ApiOperation(value = "搜索补齐、建议")

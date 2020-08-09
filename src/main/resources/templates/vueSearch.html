@@ -2,12 +2,11 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>searchBaidu</title>
-    <link rel="stylesheet" type="text/css" href="../static/bootstrap4/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/vueSearch.css">
-    <script type="text/javascript" src="../static/vue2.6.10/vue.js"></script>
-    <script type="text/javascript" src="../static/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/vueSearch.js"></script>
+    <title>es search vue</title>
+    <link rel="stylesheet" type="text/css" href="./bootstrap4/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/vueSearch.css">
+    <script type="text/javascript" src="./vue2.6.10/vue.js"></script>
+    <script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
 
 </head>
 <body>
@@ -26,28 +25,48 @@
                     <form id="form" name="f" action="/es" class="fm">
                         <div id="suggetUl" class="bdsug bdsug-new">
                             <ul>
-                                <li class="bdsug-overflow">
-                                    css<b>是什么</b>
-                                </li>
-                                <li class="bdsug-overflow">
-                                    css<b>ci</b>
-                                </li>
-                                <li class="bdsug-overflow">
-                                    css<b>选择器</b>
+                                <li class="bdsug-overflow" v-for="item in suList" @mousedown="selectLi(item.es)">
+                                    <b>{{item.es}}</b>
                                 </li>
                             </ul>
                         </div>
                         <span class="bg s_ipt_wr quickdelete-wrap">
-                            <input id="kw" name="wd" class="s_ipt" maxlength="255" autocomplete="off" onblur="showSuggetUl(false)" onfocus="showSuggetUl(true)">
+                            <input id="kw" name="wd" class="s_ipt" maxlength="255" autocomplete="off"
+                                   v-model="keyword" @input="findSuggest" @blur="showSuggetUl(false)" @focus="findSuggest">
                         </span>
                         <span class="bg s_btn_wr">
-                            <input type="submit" id="su" class="bg s_btn" value="搜索">
+                            <input type="button" class="bg s_btn" value="搜索" @click="findData">
                         </span>
                     </form>
                 </div>
-                <div id="s_user"></div>
+                <div id="s_user">
+                    <a>用户信息</a>
+                    <a>keyvin</a>
+                </div>
+            </div>
+        </div>
+        <div id="wrapper_wrapper">
+            <div id="container" class="container_new">
+                <div id="content_left">
+                    <div class="result c-container" v-for="item in dataList">
+                        <a class="t">{{item.name}}</a>
+                        <div class="c-abstract" v-html="item.fragment+','+item.age+','+item.content">
+                        </div>
+                    </div>
+                </div>
+                <div id="content_right" class="cr-offset">
+                    <table>
+                        <tbody>
+                            <tr><td>热度数据aaa</td><td>100w</td></tr>
+                            <tr><td>热度数据bbb</td><td>50w</td></tr>
+                            <tr><td>ccc</td><td>30w</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript" src="./js/vueSearch.js"></script>
 </body>
 </html>
