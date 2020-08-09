@@ -6,6 +6,7 @@ springboot集成elasticsearch
 3、集成thymeleaf编写页面  
 4、需要事先安装elasticsearch  
 5、需要事先安装ik分词器，[ik地址](https://github.com/medcl/elasticsearch-analysis-ik)  
+6、ik分词检索/搜索关键字自动补全
 
 ## 版本
 
@@ -21,5 +22,5 @@ analysis-ik | 6.6.0
 [http://127.0.0.1:8080/es/search/bookList](http://127.0.0.1:8080/es/search/bookList)  
  ![image](https://raw.githubusercontent.com/keyvin-wei/springboot-elasticsearch/master/src/main/resources/static/img/bookList.png)  
 
-分词搜索页：  
-![image](https://github.com/keyvin-wei/springboot-elasticsearch/blob/master/src/main/resources/static/img/searchSuggest.gif)
+分词搜索/关键字补全演示：  
+![image](https://github.com/keyvin-wei/springboot-elasticsearch/blob/master/src/main/resources/static/img/searchVue.gif)
