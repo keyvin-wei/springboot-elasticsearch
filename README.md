@@ -3,7 +3,7 @@
 springboot集成elasticsearch  
 1、ES连接客户端使用High Level REST Client  
 2、集成swagger接口  
-3、集成thymeleaf编写页面  
+3、集成thymeleaf编写页面，vue2.0页面渲染  
 4、需要事先安装elasticsearch  
 5、需要事先安装ik分词器，[ik地址](https://github.com/medcl/elasticsearch-analysis-ik)  
 6、ik分词检索/搜索关键字自动补全
